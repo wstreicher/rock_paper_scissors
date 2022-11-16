@@ -1,34 +1,49 @@
+let score = 0;
+let rounds = 0;
+const buttons = document.querySelectorAll('button');
+const count = document.querySelector('.count');
+const roundResult = document.createElement('p');
+const result = document.querySelector('.score').appendChild(roundResult).classList.add('result');
+const finalResult = document.createElement('h1');
+const final = document.querySelector('.score').appendChild(finalResult);
+
+count.textContent = score;
+
 function getComputerChoice() {
     let choice;
-    const choices = ["rock", "paper", "scissors"];
-    choice = choices[Math.floor(Math.random() * choices.length)];
+    const CHOICES = ["rock", "paper", "scissors"];
+    choice = CHOICES[Math.floor(Math.random() * CHOICES.length)];
     return choice
-}
+};
 
-function playRound(playerSelection, computerSelection) {
-    player = playerSelection.toLowerCase()
-    if ((player == "rock" && computerSelection == "rock") || (player == "scissors" && computerSelection == "scissors") || (player == "paper" && computerSelection == "paper")) {
-        console.log("You tied!");
-    } else if ((player == "paper" && computerSelection == "rock") || (player == "scissors" && computerSelection == "paper") || (player == "rock" && computerSelection == "scissors")) {
-        console.log("You win! " + player + " beats " + computerSelection)
-        return true
+function shutItDown() {
+    buttons.forEach(button => button.remove());
+};
+
+var start = function roundStart(button) {
+    playRound((button.classList.value), getComputerChoice())
+};
+
+function playRound(playerChoice, computerChoice) {
+    if (rounds == 5) {
+        finalResult.textContent = `Game over! You won ${score} out of 5 games.`
+        score = 0;
+        rounds = 0;
+        shutItDown();
+    } else if ((playerChoice == "rock" && computerChoice == "rock") || (playerChoice == "scissors" && computerChoice == "scissors") || (playerChoice == "paper" && computerChoice == "paper")) {
+        roundResult.textContent = "You tied!";
+        rounds += 1;
+        count.textContent = score;
+    } else if ((playerChoice == "paper" && computerChoice == "rock") || (playerChoice == "scissors" && computerChoice == "paper") || (playerChoice == "rock" && computerChoice == "scissors")) {
+        roundResult.textContent = ("You win! " + playerChoice + " beats " + computerChoice);
+        score += 1;
+        rounds += 1;
+        count.textContent = score;
     } else {
-        console.log("You lose! " + computerSelection + " beats " + player)
-        return false
+        roundResult.textContent = ("You lose! " + computerChoice + " beats " + playerChoice);
+        rounds += 1;
+        count.textContent = score;
     }
-  }
-
-function game() {
-    let playerWins = 0;
-    for (let i = 0; i < 5; i++) {
-        let playerSelection = (prompt("Rock, Paper, or Scissors?"));
-        let computerSelection = getComputerChoice();
-        let winner = playRound(playerSelection, computerSelection);
-        if (winner == true) {
-            playerWins += 1
-        } else {
-            continue
-        }
-     }
-     return "You won " + playerWins + " games out of 5." 
 }
+
+buttons.forEach(button => button.addEventListener('click', start.bind(null, button)));
